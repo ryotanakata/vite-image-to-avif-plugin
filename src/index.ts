@@ -139,7 +139,7 @@ const viteImageToAVIFPlugin = ({
     const relativePath = preserveStructure
       ? path.relative(process.cwd(), filePath)
       : path.basename(filePath);
-    const avifFilePath = path.resolve(outputDir, `${relativePath}.avif`);
+    const avifFilePath = path.resolve(outputDir, `${relativePath.replace(/\.[^.]+$/, "")}.avif`);
 
     try {
       await fs.mkdir(path.dirname(avifFilePath), { recursive: true });
