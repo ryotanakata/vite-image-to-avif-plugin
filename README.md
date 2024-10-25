@@ -13,7 +13,7 @@ Automatically converts images to AVIF during Vite builds, optimizing performance
 - **Flexible output settings**: Specify custom output directories and structure preservation options.
 - **Fast and lightweight**: Designed to work efficiently within your Vite workflow without slowing down development.
 
-![AVIF conversion example](https://your-image-link-here.com/demo.png)
+![Vite AVIF](https://github.com/ryotanakata/vite-image-to-avif-plugin/raw/main/docs/assets/logos.png)
 
 ## Install
 
