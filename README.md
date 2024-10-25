@@ -1,5 +1,7 @@
 # vite-image-to-avif-plugin
 
+![Vite AVIF](https://github.com/ryotanakata/vite-image-to-avif-plugin/raw/main/docs/assets/logos.png)
+
 **Simple** | **Efficient** | **Automated** | **Vite-Optimized**
 
 Automatically converts images to AVIF during Vite builds, optimizing performance with minimal effort.
@@ -12,8 +14,6 @@ Automatically converts images to AVIF during Vite builds, optimizing performance
 - **Wide format support**: Convert multiple image formats, including PNG, JPEG, WEBP, TIFF, and HEIC.
 - **Flexible output settings**: Specify custom output directories and structure preservation options.
 - **Fast and lightweight**: Designed to work efficiently within your Vite workflow without slowing down development.
-
-![Vite AVIF](https://github.com/ryotanakata/vite-image-to-avif-plugin/raw/main/docs/assets/logos.png)
 
 ## Install
 
