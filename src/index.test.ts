@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { viteImageToAVIFPlugin } from "./index";
-import { promises as fs } from "fs";
+import { promises as fs, Dirent, Stats } from "fs";
 import path from "path";
 import sharp from "sharp";
 import type { Plugin } from "vite";
@@ -56,11 +56,12 @@ describe("viteImageToAVIFPlugin", () => {
   it("handles custom quality setting", async () => {
     plugin = viteImageToAVIFPlugin({ quality: 90 });
     vi.mocked(fs.readdir).mockResolvedValue([
-      { name: "test.png", isDirectory: () => false } as any,
+      { name: "test.png", isDirectory: () => false } as Dirent,
     ]);
-    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: Date.now() } as any);
+    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: Date.now() } as Stats);
 
-    await (plugin.buildEnd as Function)?.();
+    const buildEnd = plugin.buildEnd as () => Promise<void>;
+    await buildEnd?.();
 
     const sharpInstance = vi.mocked(sharp).mock.results[0]?.value;
     expect(sharpInstance.avif).toHaveBeenCalledWith({ quality: 90 });
@@ -72,11 +73,12 @@ describe("viteImageToAVIFPlugin", () => {
     });
 
     vi.mocked(fs.readdir).mockResolvedValue([
-      { name: "test.png", isDirectory: () => false } as any,
+      { name: "test.png", isDirectory: () => false } as Dirent,
     ]);
-    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: Date.now() } as any);
+    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: Date.now() } as Stats);
 
-    await (plugin.buildEnd as Function)?.();
+    const buildEnd = plugin.buildEnd as () => Promise<void>;
+    await buildEnd?.();
 
     // Confirm that readdir is called for each source path
     expect(fs.readdir).toHaveBeenCalledTimes(2);
@@ -86,10 +88,11 @@ describe("viteImageToAVIFPlugin", () => {
     plugin = viteImageToAVIFPlugin({});
 
     vi.mocked(fs.readdir).mockResolvedValue([
-      { name: "test.txt", isDirectory: () => false } as any,
+      { name: "test.txt", isDirectory: () => false } as Dirent,
     ]);
 
-    await (plugin.buildEnd as Function)?.();
+    const buildEnd = plugin.buildEnd as () => Promise<void>;
+    await buildEnd?.();
 
     // Confirm that sharp is not called
     expect(sharp).not.toHaveBeenCalled();
@@ -105,11 +108,12 @@ describe("viteImageToAVIFPlugin", () => {
 
     vi.mocked(fs.readFile).mockResolvedValue(JSON.stringify(cache));
     vi.mocked(fs.readdir).mockResolvedValue([
-      { name: "test.png", isDirectory: () => false } as any,
+      { name: "test.png", isDirectory: () => false } as Dirent,
     ]);
-    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: mtime } as any);
+    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: mtime } as Stats);
 
-    await (plugin.buildEnd as Function)?.();
+    const buildEnd = plugin.buildEnd as () => Promise<void>;
+    await buildEnd?.();
 
     // Cached files should be skipped
     expect(sharp).not.toHaveBeenCalled();
@@ -119,17 +123,18 @@ describe("viteImageToAVIFPlugin", () => {
     plugin = viteImageToAVIFPlugin({});
 
     vi.mocked(fs.readdir).mockResolvedValue([
-      { name: "test.png", isDirectory: () => false } as any,
+      { name: "test.png", isDirectory: () => false } as Dirent,
     ]);
-    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: Date.now() } as any);
+    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: Date.now() } as Stats);
 
     const error = new Error("Conversion failed");
     vi.mocked(sharp).mockImplementation(() => {
       throw error;
     });
 
+    const buildEnd = plugin.buildEnd as () => Promise<void>;
     // Confirm that errors are handled without being thrown
-    await expect((plugin.buildEnd as Function)?.()).resolves.not.toThrow();
+    await expect(buildEnd?.()).resolves.not.toThrow();
   });
 
   // Testing concurrency limit
@@ -143,23 +148,26 @@ describe("viteImageToAVIFPlugin", () => {
       { name: "test2.png", isDirectory: () => false },
       { name: "test3.png", isDirectory: () => false },
       { name: "test4.png", isDirectory: () => false },
-    ] as any[]);
-    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: Date.now() } as any);
+    ] as Dirent[]);
+    vi.mocked(fs.stat).mockResolvedValue({ mtimeMs: Date.now() } as Stats);
 
     const conversion = vi
       .fn()
       .mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
     vi.mocked(sharp).mockImplementation(
       () =>
         ({
-          avif: () => ({ toFile: conversion }),
-        }) as any
+          avif: vi.fn(() => ({
+            toFile: conversion,
+          })),
+        }) as unknown as sharp.Sharp,
     );
 
+    const buildEnd = plugin.buildEnd as () => Promise<void>;
     const start = Date.now();
-    await (plugin.buildEnd as Function)?.();
+    await buildEnd?.();
     const duration = Date.now() - start;
 
     // Confirm that concurrency is limited
