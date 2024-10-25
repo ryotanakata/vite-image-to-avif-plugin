@@ -44,7 +44,7 @@ const viteImageToAVIFPlugin = ({
   // Image extensions pattern
   const imageExtensionsPattern = new RegExp(
     `\\.(${imageExtensions.join("|")})$`,
-    "i"
+    "i",
   );
 
   /**
@@ -105,7 +105,7 @@ const viteImageToAVIFPlugin = ({
         }
 
         return null;
-      })
+      }),
     );
 
     return files.flat().filter((file): file is string => file !== null);
@@ -124,7 +124,7 @@ const viteImageToAVIFPlugin = ({
     filePath: string,
     outputDir: string,
     quality: number,
-    cache: ImageCache
+    cache: ImageCache,
   ): Promise<void> => {
     const normalizedFilePath = path.normalize(filePath);
     const fileMtime = await getFileMtime(normalizedFilePath);
@@ -139,7 +139,10 @@ const viteImageToAVIFPlugin = ({
     const relativePath = preserveStructure
       ? path.relative(process.cwd(), filePath)
       : path.basename(filePath);
-    const avifFilePath = path.resolve(outputDir, `${relativePath.replace(/\.[^.]+$/, "")}.avif`);
+    const avifFilePath = path.resolve(
+      outputDir,
+      `${relativePath.replace(/\.[^.]+$/, "")}.avif`,
+    );
 
     try {
       await fs.mkdir(path.dirname(avifFilePath), { recursive: true });
@@ -152,7 +155,7 @@ const viteImageToAVIFPlugin = ({
         error instanceof Error ? error.message : String(error);
 
       logger.error(
-        `Failed to convert ${filePath} to AVIF format: ${errorMessage}`
+        `Failed to convert ${filePath} to AVIF format: ${errorMessage}`,
       );
     }
   };
@@ -177,9 +180,9 @@ const viteImageToAVIFPlugin = ({
         const results = await Promise.allSettled(
           allImageFiles.map((filePath) =>
             limit(() =>
-              convertImageToAvif(filePath, resolvedOutputDir, quality, cache)
-            )
-          )
+              convertImageToAvif(filePath, resolvedOutputDir, quality, cache),
+            ),
+          ),
         );
 
         results.forEach((result) => {
