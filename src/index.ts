@@ -123,6 +123,7 @@ const viteImageToAVIFPlugin = ({
   const convertImageToAvif = async (
     filePath: string,
     outputDir: string,
+    rootDir: string,
     quality: number,
     cache: ImageCache,
   ): Promise<void> => {
@@ -137,7 +138,7 @@ const viteImageToAVIFPlugin = ({
 
     // Generate output path while preserving directory structure
     const relativePath = preserveStructure
-      ? path.relative(process.cwd(), filePath)
+      ? path.relative(rootDir, filePath)
       : path.basename(filePath);
     const avifFilePath = path.resolve(
       outputDir,
@@ -180,7 +181,13 @@ const viteImageToAVIFPlugin = ({
         const results = await Promise.allSettled(
           allImageFiles.map((filePath) =>
             limit(() =>
-              convertImageToAvif(filePath, resolvedOutputDir, quality, cache),
+              convertImageToAvif(
+                filePath,
+                resolvedOutputDir,
+                imgDir,
+                quality,
+                cache,
+              ),
             ),
           ),
         );
