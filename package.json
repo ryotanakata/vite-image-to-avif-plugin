@@ -1,6 +1,6 @@
 {
   "name": "vite-image-to-avif-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Automatically converts images to AVIF during Vite builds, optimizing performance with minimal effort.",
   "type": "module",
   "main": "./dist/index.cjs",
