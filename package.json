@@ -1,6 +1,6 @@
 {
   "name": "vite-image-to-avif-plugin",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Automatically converts images to AVIF during Vite builds, optimizing performance with minimal effort.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -46,7 +46,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=24.11.0"
+    "node": ">=20.19.0"
   },
   "dependencies": {
     "p-limit": "^7.3.1",
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.1.1",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
     "eslint": "^10.7.0",
