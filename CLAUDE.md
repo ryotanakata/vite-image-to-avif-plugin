@@ -9,7 +9,7 @@ npm test        # vitest run
 npm run lint    # ESLint実行（src配下、拡張子 .ts）
 ```
 
-`prepublishOnly` が `lint && test && build` を束ねている。`npm publish` は人間が明示的に指示したときのみ行う。
+`prepublishOnly` が `lint && test && build` を束ねている。**`npm publish` を手元で直接実行しない**（`main` へのマージをトリガーに CI が自動で行う。詳細は「リリース自動化」を参照）。
 
 ## アーキテクチャ概要
 
@@ -26,6 +26,19 @@ npm run lint    # ESLint実行（src配下、拡張子 .ts）
 - **named export のみ**（`export default` 禁止）。`viteImageToAVIFPlugin` を named export する
 - **peerDependencies** に `vite` を持つ（プラグインなのでVite本体は同梱しない）。`dependencies` は `sharp` と `p-limit` のみに絞る
 - **ライブラリ公開物は `dist/` のみ**（`package.json` の `files`）。ソースやテストは配布物に含めない
+
+## リリース自動化
+
+`main` へのマージをトリガーに、コミット履歴（Conventional Commits）から semver を自動判定して npm へ公開する。
+
+- **バージョン判定・公開**: [semantic-release](https://semantic-release.gitbook.io/)（設定は `.releaserc.json`）。`feat` → minor、`fix`/`perf` → patch、`BREAKING CHANGE:` フッター → major
+- **ワークフロー**: `.github/workflows/release.yml`（`main` への push で発火。lint・test・build を通してから `npx semantic-release` を実行）
+- **副産物**: `CHANGELOG.md` の自動生成・更新、`vX.Y.Z` 形式のGitタグ、GitHub Releaseの作成
+- **前提**: リポジトリの GitHub Secrets に `NPM_TOKEN`（npmのautomationトークン）が登録されていること。無いとリリースジョブが `ENONPMTOKEN` で失敗する
+- **依存関係の定期更新**: `.github/dependabot.yml`（npm・github-actions を週次でチェックし、更新PRを自動作成。マージすれば次のリリースに自動的に含まれる）
+- **ループ防止**: `@semantic-release/git` が push するリリースコミットは `chore(release): ... [skip ci]` を含むため、このコミット自身では release ワークフローが再発火しない
+
+自律開発ループのルーチンは `npm publish` を直接実行しない（`.claude/routine-prompt.md` の禁止事項を参照）。バージョニング・公開は上記の自動化に委ねる。
 
 ## 自律開発ループ（Notion連携）
 
