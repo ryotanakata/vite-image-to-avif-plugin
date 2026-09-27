@@ -43,6 +43,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify baseline release tag exists
+        run: |
+          if ! git tag -l 'v*' | grep -q .; then
+            echo "::error::v* タグが1つも存在しません。npmには既に $(node -p "require('./package.json').version") が公開済みのため、" \
+                 "先にそのバージョンを指すベースラインタグ（例: v$(node -p "require('./package.json').version")）を手動で作成・pushしてください。" \
+                 "タグが無い状態でsemantic-releaseを実行すると1.0.0から採番され、npmのlatestタグが既存の公開バージョンより古い番号で上書きされる恐れがあります。"
+            exit 1
+          fi
+
       - name: Release
         run: npx semantic-release
         env:
