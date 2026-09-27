@@ -59,4 +59,4 @@ git push -u origin <ブランチ名>
 - base ブランチへの直 push・force push
 - レビュー未実施（ゲート未通過）でのコミット強行（`SKIP_RULES_REVIEW=1` は人間が明示的に付けた場合のみ有効。このスキルが自発的に付けることは禁止）
 - lint 抑制コメント・テストの無効化による「pass に見せる」対応
-- npm パッケージとして公開すること（`npm publish`）はこのスキルの範囲外。人間が明示的に指示したときのみ
+- npm パッケージとして公開すること（`npm publish`）はこのスキルの範囲外。`main` へのマージ後、CI（semantic-release）が自動で行う
