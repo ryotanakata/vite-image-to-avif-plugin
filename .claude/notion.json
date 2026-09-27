@@ -1,0 +1,19 @@
+{
+  "_comment": "Notion ID の正式参照元。ルーチンが参照する",
+  "database_id": "c0c146f5c7084e02b79a66f234cf67a6",
+  "data_source_id": "d746daf0-dd7b-4a33-b43b-821202484556",
+  "status_property": "Status",
+  "status_values": {
+    "draft": "未起票",
+    "queue": "AI開発キュー",
+    "review": "AIレビュー待ち",
+    "reviewing": "レビュー中",
+    "done": "完了"
+  },
+  "type_property": "種別",
+  "id_prefix": "AVIF",
+  "id_property_mcp": "userDefined:ID",
+  "repository": "ryotanakata/vite-image-to-avif-plugin",
+  "base_branch": "main",
+  "test_command": "npm run lint && npm test && npm run build"
+}
